@@ -1,0 +1,129 @@
+#subscribe{
+    padding-top:100px;
+    width: 100%;
+}
+#listServers{
+    display:none;
+    padding: 15px 0 0 0;
+}
+#create{
+    display:none;
+}
+#listGames{
+    display: none;
+}
+#nameUser{
+
+    font-size: 12pt;
+
+}
+#hello{
+    padding:0px 0px 10px 80px;
+}
+#TableGames{
+    border:solid black 1px;
+    width: 340px;
+    height: 50px;
+    overflow: auto;
+
+}
+#TableDiv{
+    height: 286px;
+    border: 1px solid black;
+    overflow: hidden;
+    overflow-y:auto;
+}
+td{
+    border:solid black 1px;
+}
+tr{
+    border: solid black 1px;
+}
+
+.token{
+    width:35px;
+    height:35px;
+}
+.red{
+    background-image: url(IMG/K1.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.blue{
+    background-image: url(IMG/K2.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+
+
+body {
+    background: #B3FAE7;
+}
+
+#osn {
+    width: 1200px;
+    margin: 0 auto;
+    border: 7px dashed #1D53E2;
+}
+
+#shapka {
+    width: 1200px;
+    background: #FBF25B;
+    box-shadow: 0 5px 3px rgba(0,0,0,0.5);
+    position: relative;
+}
+
+#content {
+    width: 1200px;
+    height: 480px;
+    background: url(IMG/IMG3.jpg);
+}
+
+
+#loginv {
+    background: white;
+    position: absolute;
+    margin: 20px 0 0 20px;
+    padding: 5px 5px 5px 5px;
+    border: 5px ridge #0AC249;
+    float: left;
+}
+
+#loginok {
+    width: 350px;
+    height: 150px;
+    background: #1DE261;
+    position: absolute;
+    margin: 20px 0 0 20px;
+    border: 5px ridge #0AC249;
+    float: left;
+}
+
+#game {
+    width: 400px;
+    height: 403px;
+    position: absolute;
+    margin: 20px 0 0 400px;
+    background: white;
+    border: 5px ridge #FBF25B;
+}
+
+#battle {
+    width: 900px;
+    height: 450px;
+    position: absolute;
+    margin: 20px 0 0 350px;
+    background: white;
+    border: 5px ridge #FBF25B;
+}
+
+.img1 {
+    width:700px;
+    margin: 0 0 0 250px;
+}
+
+.namepl {
+    font-size: 20pt;
+}
