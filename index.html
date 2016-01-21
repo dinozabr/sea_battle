@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> Морской бой ОНЛАЙН</title>
+		<meta charset="UTF-8">
+						<link rel="stylesheet" href="style.css">
+		<script src="jquery2.js"></script>
+		<script>
+			var field={};
+			var person;
+			var isSecondPlayer = false;
+			var count = 0;
+			var isViewer = false;
+			var isStartGame = false;
+
+				/*Рисование поля работает корректно
+
+				 */
+			function sec() {
+				if(isStartGame){
+					var dates = {
+						"action": "updateField",
+						"id_game": field.id_game,
+					};
+					$.ajax({
+						url: 'quickstart.php',
+						type: 'POST',
+						dataType:'JSON',
+						success: function (data) {
+							field =data;
+							if(field.idPlayer2 != null && field.idPlayer2 != 0){
+								$("#player2").html("Игрок2:"+field.idPlayer2);
+							}
+							update_field(field);
+						},
+						data: {data:JSON.stringify(dates)}
+					});
+
+				}
+
+
+			}
+			setInterval(sec, 5000);//запрос на получение текущего состояния игрового поля*/
+
+
+				function paint_field(field) {
+					var table = $('<table cellspacing="1" border="1" id="game-table">');
+					$("#field").html(table);
+					for (var i = 0; i < 10; ++i) {
+						var tr = $('<tr>');
+						for (var j = 0; j < 10; ++j) {
+							var td = $('<td>').attr('class', 'token');
+							coord = String(i) + String(j);
+
+							td.attr('onclick', 'shot(' + parseInt(coord) + ')');
+
+							tr.append(td);
+						}
+						table.append(tr);
+					}
+
+				}
+
+
+				function login() {
+					if($("#name").val() != "") {
+						document.getElementById('create').style.display = 'block';
+						var dates = {
+							"action": "login",
+							"name": $("#name").val()
+						};
+
+						$.ajax({
+							url: 'quickstart.php',
+							type: 'POST',
+							dataType: 'JSON',
+
+							success: function (data) {
+								person = data;
+								$("#hello").html("Здравствуйте,"+dates.name);
+								console.log(person.id);
+							},
+							data: {data: JSON.stringify(dates)}
+						});
+
+						document.getElementById('formLogin').style.display = 'none';
+						document.getElementById('listServers').style.display = 'block';
+					}else{confirm("Введите имя пользователя")}
+				}
+				function connect_to_view(id_game){
+					document.getElementById('hide').style.display = 'none';
+					isStartGame = true;
+					isViewer = true;
+					var dates = {
+						"action": "connect_to_view",
+						"id_game": id_game
+					};
+
+					$.ajax({
+						url: 'quickstart.php',
+						type: 'POST',
+						dataType:'JSON',
+
+						success: function (data) {
+							$("#nameUser").html("Игрок1: "+data.name1);
+							$("#player2").html("Игрок2: "+data.name2);
+							field =data;
+
+							update_field(field);
+						},
+						data: {data:JSON.stringify(dates)}
+					});
+
+				}
+
+				function getGames() {
+					document.getElementById('listGames').style.display = 'block';
+
+					var dates = {
+						"action": "getGames",
+					};
+					$.ajax({
+						url: 'quickstart.php',
+						type:'POST',
+						data:dates,
+				    	success: function (data) {
+							$("#TableGames").html(data);
+						}
+					});
+
+				};
+
+				function createGame() {
+					document.getElementById('hide').style.display = 'none';
+					a = $('#nameGame').val();
+					if(a != "") {
+						isStartGame = true;
+						name = $('#name').val();
+
+						if (a.length > 0) {
+							var dates = {
+								"action": "createGame",
+								"nameGame": a,
+								"nameUser": name,
+								"idUser": person.id
+							};
+							$("#nameUser").html("Игрок1: "+dates.nameUser);
+							$.ajax({
+								url: 'quickstart.php',
+								type: 'POST',
+								dataType: 'JSON',
+
+								success: function (data) {
+									field = data;
+
+									paint_field();
+								},
+								data: {data: JSON.stringify(dates)}
+							});
+						}
+					}else{confirm("Введите название игры")}
+				}
+
+
+				function connect_to_game(id_game) {
+					document.getElementById('hide').style.display = 'none';
+					isStartGame = true;
+					isSecondPlayer = true;
+					var dates = {
+						"action": "connect",
+						"name": $("#name").val(),
+						"id_game": id_game,
+						"idUser": person.id,
+
+					};
+
+					$.ajax({
+						url: 'quickstart.php',
+						type: 'POST',
+						dataType:'JSON',
+
+						success: function (data) {
+							field =data;
+							$("#nameUser").html("Игрок1:"+field.idPlayer1);
+
+							update_field(field);
+						},
+						data: {data:JSON.stringify(dates)}
+					});
+				}
+
+				function get_field(id_game) {
+					var dates = {
+						"action": "update_field",
+						"id_game": id_game
+					};
+					$.ajax({
+						url: 'quickstart.php',
+						type: 'POST',
+						dataType:'JSON',
+
+						success: function (data) {
+							field = data;
+							paint_field();
+						},
+						data: {data:JSON.stringify(dates)}
+					});
+				}
+
+				function update_field() {
+
+					var table = $('<table cellspacing="1" border="1" id="game-table">');
+					$("#field").html(table);
+					var c = 0;
+					for (var i = 0; i < 10; ++i) {
+						var tr = $('<tr>');
+						for (var j = 0; j < 10; ++j) {
+							var td = $('<td>').attr('class', 'token');
+
+							var d = field.f.charAt(c);
+							if (d == '1') {
+								td.toggleClass('red');
+							} else if (d == '2') {
+								td.toggleClass('blue');
+
+							} else if(!isViewer){
+								coord = String(i) + String(j);
+								td.attr('onclick', 'shot(' + parseInt(coord) + ')');
+							}
+							c++;
+							tr.append(td);
+						}
+						table.append(tr);
+					}
+				}
+
+
+				function shot(w) {
+					var dates = {
+						"action": "shot",
+						"id_game": field.id_game,
+						"coord": w,
+						"field": field.f,
+						"secondplayer": isSecondPlayer
+					};
+					console.log(isSecondPlayer);
+
+
+					$.ajax({
+						url: 'quickstart.php',
+						type: 'POST',
+						dataType:'JSON',
+
+						success: function (data) {
+							field = data;
+
+							update_field(field);
+						},
+						data: {data:JSON.stringify(dates)}
+					});
+				}
+
+		</script>
+	</head>
+	<body>
+	<div id="osn">
+		<div id="shapka"><img src="IMG/IMG1.jpg" class="img1">
+
+		</div>
+		<div id="content">
+			<div id="loginv">
+
+				<div id="hide">
+					<div id="hello">
+
+					</div>
+					<div id="formLogin">
+						<input type="text" name="message" id="name" />
+						<input type="button" value="Залогиниться" id="sub" onclick="login()"/>
+					</div>
+					<div id="create">
+						<input type="button" value="Создать игру" id="createGame" onclick="createGame()"/>
+						<input type="text" id="nameGame" />
+					</div>
+					<div id="listServers">
+						<input type="button" value="Получить список игр" id="getGames" onclick="getGames()"/>
+					</div>
+					<div id="listGames">
+						<p>Список серверов</p>
+						<div id="TableDiv">
+							<div id="gamesTable">
+								<table id="TableGames">
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="nameUser">
+
+				</div>
+				<div id="player2">
+
+				</div>
+			</div>
+			<div id="game">
+				<div id="field">
+
+				</div>
+			</div>
+   		</div>
+	</div>
+	</body>
+</html>
